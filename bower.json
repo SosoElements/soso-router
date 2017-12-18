@@ -1,0 +1,15 @@
+{
+  "name": "soso-router",
+  "description": "Simple router",
+  "main": "soso-router.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0"
+  },
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "soso-pages": "SosoElements/soso-pages#^0.1.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  }
+}

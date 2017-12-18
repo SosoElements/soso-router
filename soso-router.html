@@ -1,0 +1,118 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="soso-router">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+  <script>
+    class SosoRouter extends Polymer.Element {
+      static get is() { return 'soso-router'; }
+      static get properties() {
+        return {
+          route: {
+            type: Object,
+            notify: true
+          }
+        };
+      }
+
+      constructor() {
+        super();
+        this._clickEvent = ('undefined' !== typeof document) && document.ontouchstart ? 'touchstart' : 'click';
+        this._changeListener = this._onChanged.bind(this);
+        this._clickListener = this._onLinkClick.bind(this);
+        this._routes = new Map();
+      }
+
+      go(url, context, animation) {
+        if (!url) {
+          url = "/";
+        }
+        let state = {};
+        if (context) {
+          state.context = context;
+        }
+        if (animation) {
+          state.animation = animationl
+        }
+        window.history.pushState(state, null, url);
+        return this._onChanged();
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._attachHandlers();
+        this._onChanged();
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this._detachHandlers();
+      }
+
+      _attachHandlers() {
+        this._detachHandlers();
+        window.addEventListener('popstate', this._changeListener);
+        document.addEventListener(this._clickEvent, this._clickListener);
+      }
+
+      _detachHandlers() {
+        window.removeEventListener('popstate', this._changeListener);
+        document.removeEventListener(this._clickEvent, this._clickListener);
+      }
+
+      _which(e) {
+        e = e || window.event;
+        return null === e.which ? e.button : e.which;
+      }
+
+      _isSameOrigin(href) {
+        var origin = location.protocol + '//' + location.hostname;
+        if (location.port) origin += ':' + location.port;
+        return (href && (0 === href.indexOf(origin)));
+      }
+
+      _onLinkClick(e) {
+        if (1 !== this._which(e)) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        if (e.defaultPrevented) return;
+        // ensure node is link
+        var el = e.path ? e.path[0] : e.target;
+        while (el && 'A' !== el.nodeName) el = el.parentNode;
+        if (!el || 'A' !== el.nodeName) return;
+        if (el.hasAttribute('download') || el.getAttribute('rel') === 'external') return;
+        var link = el.getAttribute('href');
+        if (el.pathname === location.pathname && (el.hash || '#' === link)) return;
+        if (link && link.indexOf('mailto:') > -1) return;
+        if (el.target) return;
+        if (!this._isSameOrigin(el.href)) return;
+
+        var path = el.pathname + el.search + (el.hash || '');
+        e.preventDefault();
+        this.go(path);
+      }
+
+      _onChanged() {
+        let path = window.location.pathname || "";
+        const state = window.history.state || {};
+        const context = state.context || {};
+        const animation = state.animation || null;
+        if (path.indexOf('/') === 0) {
+          path = path.substring(1);
+        }
+        const route = {
+          path: path,
+          context: context,
+          animation: animation
+        };
+        this.route = route;
+        this.dispatchEvent(new CustomEvent('route-change', { bubbles: true, composed: true, detail: { route: this.route } }));
+      }
+    }
+    window.customElements.define(SosoRouter.is, SosoRouter);
+  </script>
+</dom-module>

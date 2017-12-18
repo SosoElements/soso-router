@@ -1,0 +1,78 @@
+<link rel="import" href="bower_components/soso-pages/soso-pages.html">
+<link rel="import" href="soso-router.html">
+<dom-module id="demo-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      soso-pages {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        display: block;
+        box-sizing: border-box;
+      }
+
+      h1 {
+        padding: 20px;
+        margin: 0;
+      }
+    </style>
+    <soso-pages id="pages">
+      <div id="one">
+        <h1>One</h1>
+        <button on-click="_rand">Rand</button>
+        <a href="/two">Next</a>
+      </div>
+      <div id="two">
+        <h1>Two</h1>
+        <button on-click="_rand">Rand</button>
+        <a href="/three/something">Next</a>
+      </div>
+      <div id="three">
+        <h1>Three</h1>
+        <button on-click="_rand">Rand</button>
+        <a href="/four?blah=blah">Next</a>
+      </div>
+      <div id="four">
+        <h1>Four</h1>
+        <button on-click="_rand">Rand</button>
+        <a href="one">Next</a>
+      </div>
+    </soso-pages>
+    <soso-router id="router" on-route-change="_onRoute"></soso-router>
+  </template>
+  <script>
+    class DemoApp extends Polymer.Element {
+      static get is() { return 'demo-app'; }
+      static get properties() {
+        return {
+        };
+      }
+
+      _onRoute(event) {
+        let route = event.detail.route;
+        let list = ["one", "two", "three", "four"];
+        let path = route.path || "one";
+        let segments = path.split("/");
+        let ix = list.indexOf(segments[0]);
+        if (ix < 0) {
+          ix = 0;
+        }
+        this.$.pages.selectedIndex = ix;
+        console.log(route);
+      }
+
+      _rand() {
+        let list = ["one", "two", "three", "four"];
+        let p = Math.floor(Math.random() * list.length);
+        this.$.router.go("/" + list[p]);
+      }
+    }
+    window.customElements.define(DemoApp.is, DemoApp);
+  </script>
+</dom-module>
