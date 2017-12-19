@@ -70,7 +70,7 @@
       _rand() {
         let list = ["one", "two", "three", "four"];
         let p = Math.floor(Math.random() * list.length);
-        this.$.router.go("/" + list[p]);
+        this.$.router.goto("/" + list[p]);
       }
     }
     window.customElements.define(DemoApp.is, DemoApp);

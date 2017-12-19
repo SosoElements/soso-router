@@ -28,7 +28,7 @@
         this._routes = new Map();
       }
 
-      go(url, context, animation) {
+      goto(url, context, animation) {
         if (!url) {
           url = "/";
         }
@@ -93,7 +93,7 @@
 
         var path = el.pathname + el.search + (el.hash || '');
         e.preventDefault();
-        this.go(path);
+        this.goto(path);
       }
 
       _onChanged() {
