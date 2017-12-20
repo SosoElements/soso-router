@@ -53,7 +53,7 @@
           if (this.route.animation) {
             state.animation = animation;
           }
-          window.history.replaceState(state, null, this.route.path);
+          window.history.replaceState(state, null, window.location.href);
         }
       }
 
