@@ -43,6 +43,39 @@
         return this._onChanged();
       }
 
+      updateContext(context) {
+        if (this.route) {
+          this.route.context = context;
+          let state = {};
+          if (this.route.context) {
+            state.context = context;
+          }
+          if (this.route.animation) {
+            state.animation = animation;
+          }
+          window.history.replaceState(state, null, this.route.path);
+        }
+      }
+
+      replace(url, context, animation) {
+        if (!url) {
+          url = "/";
+        }
+        let state = {};
+        if (context) {
+          state.context = context;
+        }
+        if (animation) {
+          state.animation = animation;
+        }
+        if (this.route) {
+          this.route.path = url;
+          this.route.context = state.context;
+          this.route.animation = state.animation || null;
+        }
+        window.history.replaceState(state, null, url);
+      }
+
       connectedCallback() {
         super.connectedCallback();
         this._attachHandlers();
